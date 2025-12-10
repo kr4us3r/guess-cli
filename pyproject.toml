@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools >= 78.1.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "guess-cli"
+authors = [
+    {name = "kr4us3r", email = "bakemonowa@gmail.com"}
+]
+description = "A simple number guessing game"
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+classifiers = [
+    "Programming Language :: Python :: 3"
+]
+dynamic = ["version"]
+
+[project.scripts]
+guess-cli = "guess_cli.game:main"
