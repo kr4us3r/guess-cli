@@ -15,11 +15,11 @@ MAX_TRIES = {
 }
 
 def main():
-    print("Welcome to the game of guessing numbers.\n" \
-          "I'm pondering a number betwixt 1 and 100 inclusively." \
-          "\nThou art to guess it in N tries.\n\n" \
+    print("Welcome to the game of guessing numbers.\n"
+          "I'm pondering a number betwixt 1 and 100 inclusively."
+          "\nThou art to guess it in N tries.\n\n"
           
-          "Select the difficulty thou desirest:\n" \
+          "Select the difficulty thou desirest:\n"
           f"1. Easy ({MAX_TRIES[Diff.EASY]} tries)\n"
           f"2. Medium ({MAX_TRIES[Diff.MEDIUM]} tries)\n"
           f"3. Hard ({MAX_TRIES[Diff.HARD]} tries)\n")
