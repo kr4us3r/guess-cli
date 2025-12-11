@@ -55,3 +55,7 @@ A new laurel crowns thy brow! Thou hast surpassed all former feats at Easy diffi
 
 Shall we tread this stage once more? Wilt thou hazard fortune again? [Y/n]: 
 ```
+
+### Acknowledgements
+
+This frolicsome folly draws its vital spark from https://roadmap.sh/projects/number-guessing-game
