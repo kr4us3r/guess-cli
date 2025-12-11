@@ -106,7 +106,7 @@ def handle_best_score(diff: Diff, attempts: int) -> None:
             json.dump(score, file)
     if attempts < score[diff] or score[diff] == 0:
         print(f"\nA new laurel crowns thy brow! Thou hast surpassed all former feats "
-              f"at {diff} difficulty with mere {attempts} guesses!")
+              f"at {diff} difficulty with mere {attempts} guesses.")
         score[diff] = attempts
     else:
         print(f"\nThy noblest deed remaineth {score[diff]} guesses upon {diff} ground. "
@@ -117,8 +117,8 @@ def handle_best_score(diff: Diff, attempts: int) -> None:
 
 def give_hint(guess: int, secret: int) -> None:
     if secret == 42:
-        print("\nIn Belmont’s caskets, mercy droppeth as the gentle rain,"
-              "yet some deeper jest—born of stars and wandering knights—mocks"
+        print("\nIn Belmont's caskets, mercy droppeth as the gentle rain,"
+              "yet some deeper jest - born of stars and wandering knights - mocks"
               "the seeker with a sum that answers all and nothing.")
     elif guess == secret + 13:
         print("Nay, 'tis close, but hie thee higher by a baker's dozen.")

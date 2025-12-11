@@ -51,7 +51,7 @@ Too low, good soul! It dwelleth higher than 25, upon loftier ground.
 Triumph! Thou hast divined my secret in but 6 ventures!
 Thy wit hath conquered in 12.52 fleeting seconds of mortal time.
 
-A new laurel crowns thy brow! Thou hast surpassed all former feats at Easy difficulty with mere 6 guesses!
+A new laurel crowns thy brow! Thou hast surpassed all former feats at Easy difficulty with mere 6 guesses.
 
 Shall we tread this stage once more? Wilt thou hazard fortune again? [Y/n]: 
 ```

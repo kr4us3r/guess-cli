@@ -7,7 +7,7 @@ name = "guess-cli"
 authors = [
     {name = "kr4us3r", email = "bakemonowa@gmail.com"}
 ]
-description = "A simple number guessing game"
+description = "A fanciful CLI diversion: divine the secret numeral 'twixt 1 and 100"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MIT"
