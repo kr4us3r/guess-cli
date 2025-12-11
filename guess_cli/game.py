@@ -3,15 +3,21 @@ from time import time
 from enum import StrEnum
 import json
 
-class Diff(StrEnum):
+class Difficulty(StrEnum):
     EASY = "Easy"
     MEDIUM = "Medium"
     HARD = "Hard"
 
 MAX_TRIES = {
-    Diff.EASY: 10,
-    Diff.MEDIUM: 5,
-    Diff.HARD: 3
+    Difficulty.EASY: 10,
+    Difficulty.MEDIUM: 5,
+    Difficulty.HARD: 3
+}
+
+HINT_THRESHOLD = {
+    Difficulty.EASY: 8,
+    Difficulty.MEDIUM: 4,
+    Difficulty.HARD: 2
 }
 
 PROMPTS = [
@@ -27,9 +33,9 @@ def main():
           "\nThou shalt divine it with but few guesses, ere fortune turn her wheel against thee.\n\n"
           
           "Now choose thy path upon this stage of chance:\n"
-          f"1. Easy ({MAX_TRIES[Diff.EASY]} guesses, for the gentle novice)\n"
-          f"2. Medium ({MAX_TRIES[Diff.MEDIUM]} guesses, for the steadfast heart)\n"
-          f"3. Hard ({MAX_TRIES[Diff.HARD]} guesses, for the bold and valiant soul)\n")
+          f"1. Easy ({MAX_TRIES[Difficulty.EASY]} guesses, for the gentle novice)\n"
+          f"2. Medium ({MAX_TRIES[Difficulty.MEDIUM]} guesses, for the steadfast heart)\n"
+          f"3. Hard ({MAX_TRIES[Difficulty.HARD]} guesses, for the bold and valiant soul)\n")
     secret: int = random.randint(1, 100)
 
     print("Speak thy choice, fair guesser: ", end='')
@@ -37,11 +43,11 @@ def main():
         choice = input()
         match choice:
             case "1":
-                diff = Diff.EASY
+                diff = Difficulty.EASY
             case "2":
-                diff = Diff.MEDIUM
+                diff = Difficulty.MEDIUM
             case "3":
-                diff = Diff.HARD
+                diff = Difficulty.HARD
             case _:
                 print("Nay, good friend, thy choice must be 1, 2, or 3: ", end='')
                 continue
@@ -72,9 +78,7 @@ def main():
             handle_best_score(diff, attempts)
             offer_rematch()
 
-        if diff == Diff.EASY and attempts == 8 or \
-           diff == Diff.MEDIUM and attempts == 4 or \
-           diff == Diff.HARD and attempts == 2:
+        if attempts == HINT_THRESHOLD[diff]:
             give_hint(guess, secret)
 
     print(f"\nAlack and well-a-day! Thy {MAX_TRIES[diff]} guesses "
@@ -96,14 +100,21 @@ def offer_rematch() -> None:
         else:
             print("\nI pray thee, speak plainer - yea or nay? ", end='')
 
-def handle_best_score(diff: Diff, attempts: int) -> None:
-    score: dict[Diff, int] = {Diff.EASY: 0, Diff.MEDIUM: 0, Diff.HARD: 0}
+def handle_best_score(diff: Difficulty, attempts: int) -> None:
     try:
         with open("score.json", "r") as file:
             score = json.load(file)
-    except:
-        with open("score.json", "w") as file:
-            json.dump(score, file)
+    except FileNotFoundError:
+        score: dict[Difficulty, int] = {Difficulty.EASY: 0,
+                                        Difficulty.MEDIUM: 0,
+                                        Difficulty.HARD: 0}
+    except json.JSONDecodeError:
+        print("Alack! Thy scroll of triumphs is foully writ - its letters twisted by some scribbler's spite!")
+        return
+    except Exception:
+        print("Fie on't! Some Puckish sprite hath bedevil'd the fetch - thy deeds elude the light!")
+        return
+
     if attempts < score[diff] or score[diff] == 0:
         print(f"\nA new laurel crowns thy brow! Thou hast surpassed all former feats "
               f"at {diff} difficulty with mere {attempts} guesses.")
@@ -112,15 +123,18 @@ def handle_best_score(diff: Diff, attempts: int) -> None:
         print(f"\nThy noblest deed remaineth {score[diff]} guesses upon {diff} ground. "
               "This time thou hast matched valor, though not eclipsed it.")
 
-    with open("score.json", "w") as file:
-        json.dump(score, file)
+    try:
+        with open("score.json", "w") as file:
+            json.dump(score, file)
+    except Exception:
+        print("O cruel stars! Thy laurels cannot be graven - fortune denies the quill its ink!")
 
 def give_hint(guess: int, secret: int) -> None:
     if secret == 42:
         print("\nIn Belmont's caskets, mercy droppeth as the gentle rain,"
-              "yet some deeper jest - born of stars and wandering knights - mocks"
+              "yet some deeper jest - born of stars and wandering knights - mocks "
               "the seeker with a sum that answers all and nothing.")
-    elif guess == secret + 13:
+    elif guess == secret - 13:
         print("Nay, 'tis close, but hie thee higher by a baker's dozen.")
     else:
         left: int = random.randint(0, 2)
