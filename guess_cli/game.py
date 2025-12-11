@@ -1,4 +1,4 @@
-from random import randint
+import random
 from time import time
 from enum import StrEnum
 import json
@@ -14,18 +14,25 @@ MAX_TRIES = {
     Diff.HARD: 3
 }
 
-def main():
-    print("Welcome to the game of guessing numbers.\n"
-          "I'm pondering a number betwixt 1 and 100 inclusively."
-          "\nThou art to guess it in N tries.\n\n"
-          
-          "Select the difficulty thou desirest:\n"
-          f"1. Easy ({MAX_TRIES[Diff.EASY]} tries)\n"
-          f"2. Medium ({MAX_TRIES[Diff.MEDIUM]} tries)\n"
-          f"3. Hard ({MAX_TRIES[Diff.HARD]} tries)\n")
-    secret: int = randint(1, 100)
+PROMPTS = [
+    "\nVent thy conjecture: ",
+    "\nWhat number dare thee name? ",
+    "\nSpeak thy guess boldly: ",
+    "\nHurl thy shaft at the mark: "
+]
 
-    print("Enter thy choice: ", end='')
+def main():
+    print("Hail, good wanderer! Welcome to this merry trial of wit.\n"
+          "I have conceivèd in my mind a secret number betwixt one and a full hundred."
+          "\nThou shalt divine it with but few guesses, ere fortune turn her wheel against thee.\n\n"
+          
+          "Now choose thy path upon this stage of chance:\n"
+          f"1. Easy ({MAX_TRIES[Diff.EASY]} guesses, for the gentle novice)\n"
+          f"2. Medium ({MAX_TRIES[Diff.MEDIUM]} guesses, for the steadfast heart)\n"
+          f"3. Hard ({MAX_TRIES[Diff.HARD]} guesses, for the bold and valiant soul)\n")
+    secret: int = random.randint(1, 100)
+
+    print("Speak thy choice, fair guesser: ", end='')
     while True:
         choice = input()
         match choice:
@@ -36,55 +43,58 @@ def main():
             case "3":
                 diff = Diff.HARD
             case _:
-                print("Choose from the numbers 1, 2, and 3: ", end='')
+                print("Nay, good friend, thy choice must be 1, 2, or 3: ", end='')
                 continue
         break
 
     attempts: int = 0
     start_time: float = time()
     while attempts < MAX_TRIES[diff]:
-        guess = input("\nEnter thy guess: ")
+        guess = input(random.choice(PROMPTS))
         if not guess.isdigit():
-            print("It ought to be a number.")
+            print("Nay, that is no number! Speak digits alone, I beseech thee.")
             continue
 
         guess = int(guess)
         if guess < 1 or guess > 100:
-            print("The number lieth in the range [1, 100].")
+            print("My secret dwelleth betwixt one and a hundred - no more, no less.")
             continue
 
         attempts += 1
         if guess > secret:
-            print(f"Incorrect. The number is less than {guess}.")
+            print(f"Alas, too high! My number lieth lower than {guess}, in humbler fields.")
         elif guess < secret:
-            print(f"Incorrect. The number is greater than {guess}.")
+            print(f"Too low, good soul! It dwelleth higher than {guess}, upon loftier ground.")
         elif guess == secret:
-            print(f"Correct. Thou guess'd the number in {attempts} attempts.\n" \
-                  f"It took thee {time() - start_time:.2f} seconds.")
+            total = time() - start_time
+            print(f"Triumph! Thou hast divined my secret in but {attempts} ventures!\n" \
+                  f"Thy wit hath conquered in {total:.2f} fleeting seconds of mortal time.")
             handle_best_score(diff, attempts)
             offer_rematch()
 
-        if diff == Diff.EASY and attempts == 8:
-            give_hint(secret)
-        elif diff == Diff.MEDIUM and attempts == 4:
-            give_hint(secret)
-        elif diff == Diff.HARD and attempts == 2:
-            give_hint(secret)
+        if diff == Diff.EASY and attempts == 8 or \
+           diff == Diff.MEDIUM and attempts == 4 or \
+           diff == Diff.HARD and attempts == 2:
+            give_hint(guess, secret)
 
-    print(f"\nThou fail'd to guess the number in {MAX_TRIES[diff]} attempts. Too bad!")
+    print(f"\nAlack and well-a-day! Thy {MAX_TRIES[diff]} guesses "
+          "are spent and the secret yet eludes thee.\n"
+          f"The number was {secret}. Fortune hath frowned this time - but courage, try again!")
     offer_rematch()
 
 def offer_rematch() -> None:
-    print("\nWishest thou to play another round? [Y/n]: ", end='')
+    print("\nShall we tread this stage once more? "
+          "Wilt thou hazard fortune again? [Y/n]: ", end='')
     while True:
         yes_no: str = input()
-        if yes_no.lower() in ["", "y", "yes"]:
-            print('\n')
+        if yes_no.lower() in ["", "y", "yes", "yea"]:
+            print('\nBrave heart! The wheel turns anew...\n')
             main()
-        elif yes_no.lower() in ["n", "no"]:
+        elif yes_no.lower() in ["n", "no", "nay"]:
+            print("\nFare thee well, noble guesser. Till next we meet upon the boards!")
             exit(1)
         else:
-            print("\nI understood not thy answer. Try again: ", end='')
+            print("\nI pray thee, speak plainer - yea or nay? ", end='')
 
 def handle_best_score(diff: Diff, attempts: int) -> None:
     score: dict[Diff, int] = {Diff.EASY: 0, Diff.MEDIUM: 0, Diff.HARD: 0}
@@ -95,17 +105,28 @@ def handle_best_score(diff: Diff, attempts: int) -> None:
         with open("score.json", "w") as file:
             json.dump(score, file)
     if attempts < score[diff] or score[diff] == 0:
+        print(f"\nA new laurel crowns thy brow! Thou hast surpassed all former feats "
+              f"at {diff} difficulty with mere {attempts} guesses!")
         score[diff] = attempts
-
-    print(f"\nThy best score at {diff} difficulty is {score[diff]} tries.")
+    else:
+        print(f"\nThy noblest deed remaineth {score[diff]} guesses upon {diff} ground. "
+              "This time thou hast matched valor, though not eclipsed it.")
 
     with open("score.json", "w") as file:
         json.dump(score, file)
 
-def give_hint(num: int) -> None:
-    shift_left: int = randint(0, 2)
-    shift_right: int = 4 - shift_left
-    print(f"\nI shall give thee a hint: the number lieth in the range [{num-shift_left}, {num+shift_right}].")
+def give_hint(guess: int, secret: int) -> None:
+    if secret == 42:
+        print("\nIn Belmont’s caskets, mercy droppeth as the gentle rain,"
+              "yet some deeper jest—born of stars and wandering knights—mocks"
+              "the seeker with a sum that answers all and nothing.")
+    elif guess == secret + 13:
+        print("Nay, 'tis close, but hie thee higher by a baker's dozen.")
+    else:
+        left: int = random.randint(0, 2)
+        right: int = 4 - left
+        print("\nI shall lend thee aid: the number lieth in the "
+              f"narrower strait [{secret-left}, {secret+right}].")
 
 if __name__ == "__main__":
     main()
